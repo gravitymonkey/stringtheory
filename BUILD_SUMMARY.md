@@ -1,9 +1,15 @@
 # String Field MIDI Generator - Build Summary
 
-## v0.1 Monophonic Live Generator - COMPLETE
+## v0.1.1 Monophonic Live Generator with Multi-Articulation - COMPLETE
 
 **Build Date:** December 27, 2025
 **Status:** Successfully built and validated
+
+### Updates in v0.1.1
+- Added **Num Routes** parameter (1-16 MIDI channels)
+- Implemented energy-weighted articulation selection
+- Fixed monophonic voice layering bug
+- Multi-channel routing for different instrument articulations
 
 ---
 
@@ -13,14 +19,15 @@ A fully functional AU MIDI Effect plugin that generates algorithmic MIDI sequenc
 
 ### Core Features Implemented
 
-1. **7 Parameter Control System**
+1. **8 Parameter Control System**
    - Rate (0.05 - 20.0 Hz): Controls event generation frequency
    - Density (0.0 - 1.0): Probabilistic gating for sparse textures
-   - Energy (0.0 - 1.0): Affects duration and timing jitter
+   - Energy (0.0 - 1.0): Affects duration, timing jitter, AND articulation routing
    - Register Center (24 - 96): MIDI note center point
    - Register Spread (0 - 36): Pitch field bandwidth
    - Velocity (1 - 127): Base velocity with ±10 variation
    - Seed (1 - 99999): Deterministic random number generation
+   - Num Routes (1 - 16): Number of articulation channels for energy-weighted routing
 
 2. **Sample-Accurate MIDI Generation**
    - Monophonic note generation

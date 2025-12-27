@@ -35,6 +35,9 @@ StringFieldMIDIProcessor::createParameters()
     params.push_back(std::make_unique<juce::AudioParameterInt>(
         "seed", "Seed", 1, 99999, 1));
 
+    params.push_back(std::make_unique<juce::AudioParameterInt>(
+        "routes", "Num Routes", 1, 16, 1));
+
     return { params.begin(), params.end() };
 }
 
@@ -75,6 +78,28 @@ int StringFieldMIDIProcessor::pickVelocity(int baseVel)
 {
     int variation = rng.nextInt(juce::Range<int>(-10, 11));
     return juce::jlimit(1, 127, baseVel + variation);
+}
+
+int StringFieldMIDIProcessor::pickArticulation(int numRoutes, float energy)
+{
+    // Energy-weighted articulation selection
+    // Low energy (0.0) -> Channel 1 (legato, sustained)
+    // High energy (1.0) -> Channel numRoutes (staccato, flutter, extreme)
+
+    if (numRoutes <= 1)
+        return 1;
+
+    // Map energy to channel range (0 to numRoutes-1)
+    float channelFloat = energy * (float)(numRoutes - 1);
+
+    // Add jitter (±40% of range) for organic variation
+    float jitterRange = 0.4f * (float)(numRoutes - 1);
+    float jitter = (rng.nextFloat() - 0.5f) * jitterRange;
+    channelFloat += jitter;
+
+    // Clamp and convert to 1-indexed MIDI channel
+    int channel = (int)std::round(channelFloat) + 1;
+    return juce::jlimit(1, numRoutes, channel);
 }
 
 double StringFieldMIDIProcessor::calculateDuration(float energy)
@@ -161,7 +186,7 @@ void StringFieldMIDIProcessor::processBlock(
     {
         int offset = (int)(noteOffSample - blockStart);
         midiMessages.addEvent(
-            juce::MidiMessage::noteOff(1, activeNote),
+            juce::MidiMessage::noteOff(activeChannel, activeNote),
             offset
         );
         activeNote = -1;
@@ -179,14 +204,25 @@ void StringFieldMIDIProcessor::processBlock(
             int center = (int)*apvts.getRawParameterValue("center");
             int spread = (int)*apvts.getRawParameterValue("spread");
             int baseVel = (int)*apvts.getRawParameterValue("vel");
+            int numRoutes = (int)*apvts.getRawParameterValue("routes");
             float energy = *apvts.getRawParameterValue("energy");
 
             int note = pickNote(center, spread);
             int vel = pickVelocity(baseVel);
+            int channel = pickArticulation(numRoutes, energy);
             int offset = (int)(nextNoteOnSample - blockStart);
 
+            // MONOPHONIC: Force note-off on previous note before starting new one
+            if (activeNote >= 0)
+            {
+                midiMessages.addEvent(
+                    juce::MidiMessage::noteOff(activeChannel, activeNote),
+                    offset
+                );
+            }
+
             midiMessages.addEvent(
-                juce::MidiMessage::noteOn(1, note, (juce::uint8)vel),
+                juce::MidiMessage::noteOn(channel, note, (juce::uint8)vel),
                 offset
             );
 
@@ -194,6 +230,7 @@ void StringFieldMIDIProcessor::processBlock(
             double duration = calculateDuration(energy);
             noteOffSample = nextNoteOnSample + (int64_t)duration;
             activeNote = note;
+            activeChannel = channel;
         }
 
         // Schedule next event

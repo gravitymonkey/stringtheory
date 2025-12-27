@@ -17,11 +17,11 @@ private:
 
     juce::Slider rateSlider, densitySlider, energySlider;
     juce::Slider centerSlider, spreadSlider, velSlider;
-    juce::Slider seedSlider;
+    juce::Slider seedSlider, routesSlider;
 
     juce::Label rateLabel, densityLabel, energyLabel;
     juce::Label centerLabel, spreadLabel, velLabel;
-    juce::Label seedLabel;
+    juce::Label seedLabel, routesLabel;
 
     using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
 
@@ -32,6 +32,7 @@ private:
     std::unique_ptr<SliderAttachment> spreadAttachment;
     std::unique_ptr<SliderAttachment> velAttachment;
     std::unique_ptr<SliderAttachment> seedAttachment;
+    std::unique_ptr<SliderAttachment> routesAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StringFieldMIDIEditor)
 };

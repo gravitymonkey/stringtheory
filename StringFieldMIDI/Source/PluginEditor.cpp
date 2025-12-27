@@ -22,6 +22,7 @@ StringFieldMIDIEditor::StringFieldMIDIEditor(StringFieldMIDIProcessor& p)
     setupSlider(spreadSlider, spreadLabel, "Spread");
     setupSlider(velSlider, velLabel, "Velocity");
     setupSlider(seedSlider, seedLabel, "Seed");
+    setupSlider(routesSlider, routesLabel, "Num Routes");
 
     // Attach to parameters
     rateAttachment = std::make_unique<SliderAttachment>(
@@ -38,8 +39,10 @@ StringFieldMIDIEditor::StringFieldMIDIEditor(StringFieldMIDIProcessor& p)
         processor.apvts, "vel", velSlider);
     seedAttachment = std::make_unique<SliderAttachment>(
         processor.apvts, "seed", seedSlider);
+    routesAttachment = std::make_unique<SliderAttachment>(
+        processor.apvts, "routes", routesSlider);
 
-    setSize(500, 400);
+    setSize(500, 450);
 }
 
 void StringFieldMIDIEditor::paint(juce::Graphics& g)
@@ -69,4 +72,5 @@ void StringFieldMIDIEditor::resized()
     spreadSlider.setBounds(area.removeFromTop(sliderHeight).withTrimmedLeft(labelWidth));
     velSlider.setBounds(area.removeFromTop(sliderHeight).withTrimmedLeft(labelWidth));
     seedSlider.setBounds(area.removeFromTop(sliderHeight).withTrimmedLeft(labelWidth));
+    routesSlider.setBounds(area.removeFromTop(sliderHeight).withTrimmedLeft(labelWidth));
 }

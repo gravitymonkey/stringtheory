@@ -51,6 +51,7 @@ private:
 
     // Active note (monophonic v0.1)
     int activeNote = -1;
+    int activeChannel = 1;
     int64_t noteOffSample = 0;
 
     // RNG
@@ -62,6 +63,7 @@ private:
     void scheduleNextNote(double bpm, double ppqPos);
     int pickNote(int center, int spread);
     int pickVelocity(int baseVel);
+    int pickArticulation(int numRoutes, float energy);
     double calculateDuration(float energy);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StringFieldMIDIProcessor)
