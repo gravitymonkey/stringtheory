@@ -2,7 +2,7 @@
 
 A JUCE-based Audio Unit MIDI FX plugin that generates algorithmic MIDI sequences inspired by string theory concepts and Morton Feldman's aesthetic of "continuity without causality."
 
-**Current Version:** v0.1.3
+**Current Version:** v0.1.4
 
 ---
 
@@ -274,23 +274,54 @@ The plugin responds to MIDI CC messages, allowing one "conductor" track to contr
 
 ### Default CC Mappings
 
-| CC# | Controller    | Parameter     |
-|-----|---------------|---------------|
-| 1   | Mod Wheel     | Energy        |
-| 7   | Volume        | Density       |
-| 11  | Expression    | Articulation  |
-| 73  | Attack        | Memory        |
-| 74  | Brightness    | Tempo         |
-| 71  | Resonance     | Regularity    |
+All parameters use **unused CC range (20-31)** to avoid conflicts with standard controllers:
+
+| CC# | Parameter     | Description                    |
+|-----|---------------|--------------------------------|
+| 20  | Rate          | Note generation rate (Hz)      |
+| 21  | Density       | Probabilistic note gating      |
+| 22  | Energy        | Feldman ↔ Chaos                |
+| 23  | Center        | Pitch center (MIDI note)       |
+| 24  | Spread        | Pitch range (semitones)        |
+| 25  | Velocity      | Base velocity                  |
+| 26  | Memory        | Motivic repetition strength    |
+| 27  | Articulation  | Articulation center            |
+| 28  | Pulse         | Pulse mode on/off              |
+| 29  | Tempo         | Pulse tempo (BPM)              |
+| 30  | Regularity    | Rhythmic variance              |
 
 **See CONDUCTOR_MODE.md for detailed instructions.**
 
 ### Quick Conductor Setup (Logic Pro)
 
-1. Create MIDI track (your "conductor")
-2. Add CC automation (e.g., CC 1 for Energy)
-3. Route MIDI to all tracks with the plugin
-4. All instances respond together!
+**One-time setup:**
+1. Enable **IAC Driver**:
+   - Open **Audio MIDI Setup** (`/Applications/Utilities`)
+   - Window → Show MIDI Studio
+   - Double-click **IAC Driver**, check "Device is online", click Apply
+
+**Per-project setup:**
+1. **Create External MIDI track** (conductor):
+   - Track → New Track → **External MIDI** (NOT Software Instrument)
+   - Name it "Conductor"
+
+2. **Add CC automation:**
+   - Show automation (A key)
+   - Automation dropdown → MIDI CC → Choose CC (e.g., "20 Undefined")
+   - Draw automation curves
+
+3. **Route conductor output:**
+   - Select conductor track
+   - Press **I** to show Inspector (left panel)
+   - In "Track" section → **Output:** → Select **IAC Driver Bus 1**
+
+4. **Set plugin tracks to receive:**
+   - On each track with String Field MIDI plugin
+   - Press **I** to show Inspector
+   - In "Track" section → **Input:** → Select **IAC Driver Bus 1**
+   - Enable input monitoring (icon next to record button)
+
+5. **Draw automation and play!** All instances respond together!
 
 ---
 
@@ -315,13 +346,20 @@ The plugin responds to MIDI CC messages, allowing one "conductor" track to contr
 5. **Memory + Low Energy** creates recognizable motivic loops
 6. **High Density + Low Energy + Pedal** = ambient washes
 7. **Articulation automation** creates timbral evolution
-8. **Hardware controller on CC 1** for live Energy performance
+8. **Conductor mode with CC 20-30** for controlling multiple instances simultaneously
+9. **Hardware controller on CC 22** for live Energy performance
 
 ---
 
 ## Changelog
 
-### v0.1.3 (Current)
+### v0.1.4 (Current)
+- **Improved MIDI CC mappings:** All parameters now use unused CC range (20-31) to avoid conflicts
+- **All 11 core parameters** now CC-controllable: Rate, Density, Energy, Center, Spread, Velocity, Memory, Articulation, Pulse, Tempo, Regularity
+- **Enhanced documentation:** Comprehensive conductor mode setup guide with troubleshooting
+- Added signal flow diagram and TL;DR quick start
+
+### v0.1.3
 - Added MIDI CC control (Conductor Mode)
 - Flipped Memory logic (now FAVORS repetition instead of avoiding it)
 - Added Pulse/Tempo/Regularity for tempo-locked rhythms

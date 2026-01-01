@@ -9,12 +9,18 @@ StringFieldMIDIProcessor::StringFieldMIDIProcessor()
     rng.setSeed(1);
 
     // Set up default CC mappings (conductor-ready out of the box)
-    ccToParameterMap[1] = "energy";          // CC 1 (Mod Wheel) → Energy
-    ccToParameterMap[7] = "density";         // CC 7 (Volume) → Density
-    ccToParameterMap[11] = "articulation";   // CC 11 (Expression) → Articulation
-    ccToParameterMap[74] = "tempo";          // CC 74 (Brightness) → Tempo
-    ccToParameterMap[71] = "regularity";     // CC 71 (Resonance) → Regularity
-    ccToParameterMap[73] = "memory";         // CC 73 (Attack) → Memory
+    // Using unused CC range 20-31 to avoid conflicts with standard controllers
+    ccToParameterMap[20] = "rate";           // CC 20 → Rate
+    ccToParameterMap[21] = "density";        // CC 21 → Density
+    ccToParameterMap[22] = "energy";         // CC 22 → Energy
+    ccToParameterMap[23] = "center";         // CC 23 → Center
+    ccToParameterMap[24] = "spread";         // CC 24 → Spread
+    ccToParameterMap[25] = "vel";            // CC 25 → Velocity
+    ccToParameterMap[26] = "memory";         // CC 26 → Memory
+    ccToParameterMap[27] = "articulation";   // CC 27 → Articulation
+    ccToParameterMap[28] = "pulse";          // CC 28 → Pulse
+    ccToParameterMap[29] = "tempo";          // CC 29 → Tempo
+    ccToParameterMap[30] = "regularity";     // CC 30 → Regularity
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout
